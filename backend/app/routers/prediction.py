@@ -20,11 +20,11 @@ def get_latest(db: Session = Depends(get_db)):
     ).limit(5).all()
     return ApiResponse(data={"records": [r.__dict__ for r in records]})
 
+@router.post("/generate", response_model=ApiResponse)
+def generate_prediction(source: str = Query("manual"), db: Session = Depends(get_db)):
+    return ApiResponse(message="预测生成功能待实现", data={"records": []})
+
 @router.get("/{period}", response_model=ApiResponse)
 def get_by_period(period: str, db: Session = Depends(get_db)):
     records = db.query(Prediction).filter(Prediction.period == period).all()
     return ApiResponse(data={"records": [r.__dict__ for r in records]})
-
-@router.post("/generate", response_model=ApiResponse)
-def generate_prediction(source: str = Query("manual"), db: Session = Depends(get_db)):
-    return ApiResponse(message="预测生成功能待实现", data={"records": []})

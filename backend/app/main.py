@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database import create_tables
 from app.config import settings
 from app.routers import lottery, prediction, statistics, crawler
+from app.schemas import ApiResponse
 
 app = FastAPI(title=settings.app_name)
 
@@ -23,9 +24,9 @@ app.include_router(crawler.router, prefix="/api/crawler", tags=["crawler"])
 def startup_event():
     create_tables()
 
-@app.get("/api/health")
+@app.get("/api/health", response_model=ApiResponse)
 def health_check():
-    return {"status": "ok", "app": settings.app_name}
+    return ApiResponse(data={"status": "ok", "app": settings.app_name})
 
 @app.get("/")
 def root():
