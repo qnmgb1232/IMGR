@@ -4,6 +4,7 @@ from app.database import create_tables
 from app.config import settings
 from app.routers import lottery, prediction, statistics, crawler
 from app.schemas import ApiResponse
+from app.scheduler import setup_scheduler, start_scheduler, stop_scheduler
 
 app = FastAPI(title=settings.app_name)
 
@@ -23,6 +24,12 @@ app.include_router(crawler.router, prefix="/api/crawler", tags=["crawler"])
 @app.on_event("startup")
 def startup_event():
     create_tables()
+    setup_scheduler()
+    start_scheduler()
+
+@app.on_event("shutdown")
+def shutdown_event():
+    stop_scheduler()
 
 @app.get("/api/health", response_model=ApiResponse)
 def health_check():
