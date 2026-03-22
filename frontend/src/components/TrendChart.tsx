@@ -9,8 +9,8 @@ export default function TrendChart({ data, type }: TrendChartProps) {
   const color = type === 'red' ? '#e94560' : '#0ea5e9'
 
   return (
-    <ResponsiveContainer width="100%" height={180}>
-      <LineChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
+    <ResponsiveContainer width="100%" height={220}>
+      <LineChart data={data} margin={{ top: 10, right: 15, left: 0, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
         <XAxis
           dataKey="ball"
@@ -20,7 +20,7 @@ export default function TrendChart({ data, type }: TrendChartProps) {
         <YAxis
           tick={{ fill: '#94a3b8', fontSize: 10 }}
           axisLine={{ stroke: '#e2e8f0' }}
-          width={30}
+          width={35}
         />
         <Tooltip
           contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '6px' }}

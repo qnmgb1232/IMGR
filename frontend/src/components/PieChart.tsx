@@ -6,14 +6,14 @@ interface PieChartProps {
 
 export default function PieChartSection({ data }: PieChartProps) {
   return (
-    <ResponsiveContainer width="100%" height={200}>
+    <ResponsiveContainer width="100%" height={220}>
       <PieChart>
         <Pie
           data={data}
           cx="50%"
           cy="50%"
-          innerRadius={40}
-          outerRadius={70}
+          innerRadius={45}
+          outerRadius={80}
           paddingAngle={2}
           dataKey="value"
         >
