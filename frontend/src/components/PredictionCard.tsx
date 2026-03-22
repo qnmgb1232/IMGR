@@ -28,7 +28,7 @@ export default function PredictionCard({
         <div className="flex items-center gap-2">
           <span
             className={`text-xs px-2 py-1 rounded ${
-              source === 'auto' ? 'bg-ball-blue/20 text-ball-blue' : 'bg-yellow-500/20 text-yellow-500'
+              source === 'auto' ? 'bg-blue-100 text-blue-600' : 'bg-yellow-100 text-yellow-600'
             }`}
           >
             {source === 'auto' ? '自动' : '手动'}

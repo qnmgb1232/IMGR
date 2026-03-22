@@ -55,7 +55,7 @@ export default function Trends() {
         <select
           value={periods}
           onChange={(e) => setPeriods(Number(e.target.value))}
-          className="bg-bg-card border border-border-color rounded px-3 py-2 text-text-primary"
+          className="bg-white border border-gray-300 rounded px-3 py-2 text-gray-700"
         >
           <option value={20}>近20期</option>
           <option value={50}>近50期</option>

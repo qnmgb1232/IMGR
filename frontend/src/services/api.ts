@@ -14,6 +14,7 @@ export const predictionApi = {
   getHistory: (limit = 20) => api.get(`/prediction/history?limit=${limit}`),
   getLatest: () => api.get('/prediction/latest'),
   generate: (source = 'manual') => api.post(`/prediction/generate?source=${source}`),
+  getLastHitResult: () => api.get('/prediction/last/hit-result'),
 }
 
 export const statisticsApi = {

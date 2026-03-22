@@ -106,21 +106,21 @@ def setup_scheduler():
     """配置定时任务"""
     scheduler.add_job(
         crawl_latest,
-        CronTrigger(day_of_week='tue,th,sat', hour=20, minute=35),
+        CronTrigger(day_of_week='tue,thu,sat', hour=20, minute=35),
         id='crawl_latest',
         name='爬取最新开奖数据'
     )
 
     scheduler.add_job(
         auto_predict,
-        CronTrigger(day_of_week='tue,th,sat', hour=21, minute=5),
+        CronTrigger(day_of_week='tue,thu,sat', hour=21, minute=5),
         id='auto_predict',
         name='自动生成预测'
     )
 
     scheduler.add_job(
         check_hits,
-        CronTrigger(day_of_week='tue,th,sat', hour=21, minute=30),
+        CronTrigger(day_of_week='tue,thu,sat', hour=21, minute=30),
         id='check_hits',
         name='检查预测中奖'
     )
