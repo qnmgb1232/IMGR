@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { lotteryApi, predictionApi, statisticsApi } from '../services/api'
+import { lotteryApi, predictionApi, statisticsApi, crawlerApi } from '../services/api'
 import BallNumber from '../components/BallNumber'
 import TrendChart from '../components/TrendChart'
 import DistributionChart from '../components/DistributionChart'
@@ -43,6 +43,7 @@ export default function Dashboard() {
   const [blueDist, setBlueDist] = useState<{ ball: number; count: number }[]>([])
   const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false)
+  const [updating, setUpdating] = useState(false)
 
   useEffect(() => {
     loadAllData()
@@ -129,6 +130,19 @@ export default function Dashboard() {
     }
   }
 
+  const handleUpdate = async () => {
+    setUpdating(true)
+    try {
+      await crawlerApi.fetch()
+      await predictionApi.generate('manual')
+      loadAllData()
+    } catch (err) {
+      console.error('Failed to update', err)
+    } finally {
+      setUpdating(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -149,6 +163,13 @@ export default function Dashboard() {
           <div className="mb-4 pb-4 border-b border-gray-100">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-base font-semibold text-gray-700">最新开奖结果</h2>
+              <button
+                onClick={handleUpdate}
+                disabled={updating}
+                className="px-3 py-1.5 bg-gray-100 text-gray-600 text-sm rounded-lg hover:bg-gray-200 disabled:opacity-50 transition-colors"
+              >
+                {updating ? '更新中...' : '立即更新'}
+              </button>
             </div>
             <div className="flex flex-col md:flex-row md:items-center gap-3 mb-4">
               <div className="text-sm text-gray-500">

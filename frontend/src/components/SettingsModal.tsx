@@ -17,7 +17,7 @@ interface PredictionRecord {
 }
 
 export default function SettingsModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  const [activeTab, setActiveTab] = useState<'schedule' | 'history'>('schedule')
+  const [activeTab, setActiveTab] = useState<'schedule' | 'history' | 'algorithm'>('schedule')
   const [history, setHistory] = useState<PredictionRecord[]>([])
   const [loading, setLoading] = useState(false)
   const [selectedPeriod, setSelectedPeriod] = useState<string | null>(null)
@@ -102,6 +102,16 @@ export default function SettingsModal({ isOpen, onClose }: { isOpen: boolean; on
           >
             往期预测
           </button>
+          <button
+            onClick={() => setActiveTab('algorithm')}
+            className={`px-6 py-3 text-sm font-medium transition-colors ${
+              activeTab === 'algorithm'
+                ? 'text-blue-500 border-b-2 border-blue-500'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            算法说明
+          </button>
         </div>
 
         {/* Content */}
@@ -132,6 +142,70 @@ export default function SettingsModal({ isOpen, onClose }: { isOpen: boolean; on
               <p className="text-sm text-gray-500">
                 定时任务会在后端服务运行时自动执行。双色球每周开奖3次（周二、周四、周日），开奖时间约在20:30-21:00之间。
               </p>
+            </div>
+          )}
+
+          {activeTab === 'algorithm' && (
+            <div className="space-y-4">
+              <div className="bg-gray-50 rounded-xl p-4">
+                <h3 className="font-medium text-gray-700 mb-3">预测算法说明</h3>
+                <p className="text-sm text-gray-500 mb-4">
+                  系统使用5种不同的预测策略，每次生成5组预测号码，涵盖热号分析、冷号回补、均衡组合等多种选号思路。
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-white border border-gray-100 rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-6 h-6 bg-red-100 text-red-600 rounded-full text-xs flex items-center justify-center font-medium">1</span>
+                    <h4 className="font-medium text-gray-700">统计主导</h4>
+                  </div>
+                  <p className="text-sm text-gray-500">
+                    综合最近50期开奖数据，计算每个号码的出现频率和遗漏值。频率得分权重40%，遗漏值得分权重60%，综合评分后选取前6个红球和最优蓝球。
+                  </p>
+                </div>
+                <div className="bg-white border border-gray-100 rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full text-xs flex items-center justify-center font-medium">2</span>
+                    <h4 className="font-medium text-gray-700">ML主导</h4>
+                  </div>
+                  <p className="text-sm text-gray-500">
+                    基于100期历史数据计算每个号码的出现概率，使用加权随机抽样方法选号。红球和蓝球分别根据概率分布独立抽取。
+                  </p>
+                </div>
+                <div className="bg-white border border-gray-100 rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-6 h-6 bg-green-100 text-green-600 rounded-full text-xs flex items-center justify-center font-medium">3</span>
+                    <h4 className="font-medium text-gray-700">均衡型</h4>
+                  </div>
+                  <p className="text-sm text-gray-500">
+                    从高频红球(前33%)中随机选3个，从低频红球(后33%)中随机选3个，组成6个红球。蓝球从近期热号中随机选择。
+                  </p>
+                </div>
+                <div className="bg-white border border-gray-100 rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-6 h-6 bg-purple-100 text-purple-600 rounded-full text-xs flex items-center justify-center font-medium">4</span>
+                    <h4 className="font-medium text-gray-700">冷号回补</h4>
+                  </div>
+                  <p className="text-sm text-gray-500">
+                    侧重分析长期未出现的号码，遗漏值越大评分越高。预期冷号在统计上有回补倾向，选择遗漏值最高的号码组合。
+                  </p>
+                </div>
+                <div className="bg-white border border-gray-100 rounded-xl p-4 md:col-span-2">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-6 h-6 bg-orange-100 text-orange-600 rounded-full text-xs flex items-center justify-center font-medium">5</span>
+                    <h4 className="font-medium text-gray-700">热号持续</h4>
+                  </div>
+                  <p className="text-sm text-gray-500">
+                    与冷号回补相反，侧重选择近期出现频率高的号码。假设短期内趋势会延续，高频号有继续高概率出现的倾向。
+                  </p>
+                </div>
+              </div>
+              <div className="bg-blue-50 rounded-xl p-4">
+                <h4 className="font-medium text-blue-700 mb-2">算法选择策略</h4>
+                <p className="text-sm text-blue-600">
+                  每次预测同时使用5种策略生成5组号码，确保预测结果覆盖多种分析角度。中奖结果会在开奖后自动核对，并显示预测命中等级。
+                </p>
+              </div>
             </div>
           )}
 
