@@ -144,33 +144,52 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-4">
-      {/* 最新开奖 - 全宽卡片 */}
+      {/* 最新开奖 + 上期预测中奖结果 - 全宽卡片 */}
       <section className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 animate-slide-up" style={{animationDelay: '0.1s'}}>
-        <h2 className="text-base md:text-lg font-semibold text-gray-700 mb-4">最新开奖</h2>
-        {latestRecord ? (
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 md:gap-4">
-            <div className="flex gap-1.5 md:gap-2 flex-wrap">
-              {latestRecord.red_balls.split(',').map((ball) => (
-                <BallNumber key={ball} number={parseInt(ball)} type="red" size="md" />
-              ))}
-              <span className="text-gray-400 flex items-center mx-1">+</span>
-              <BallNumber number={latestRecord.blue_ball} type="blue" size="md" />
+        {/* 上期预测中奖结果 */}
+        {lastHitResult && lastHitResult.predictions.length > 0 && (
+          <div className="mb-4 pb-4 border-b border-gray-100">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-base font-semibold text-gray-700">上期预测中奖结果</h2>
             </div>
-            <div className="text-sm text-gray-400">
-              <span className="font-mono">{latestRecord.period}</span>
-              <span className="mx-2">|</span>
-              <span>{latestRecord.draw_date}</span>
+            <div className="flex flex-col md:flex-row md:items-center gap-3 mb-4">
+              <div className="text-sm text-gray-500">
+                <span className="font-mono">{lastHitResult.lottery.period}</span>
+                <span className="mx-2">|</span>
+                <span>{lastHitResult.lottery.draw_date}</span>
+                <span className="ml-2 text-gray-400">开奖号码</span>
+              </div>
+              <div className="flex gap-1.5">
+                {lastHitResult.lottery.red_balls.split(',').map((ball) => (
+                  <BallNumber key={ball} number={parseInt(ball)} type="red" size="sm" />
+                ))}
+                <span className="text-gray-400 flex items-center mx-1">+</span>
+                <BallNumber number={lastHitResult.lottery.blue_ball} type="blue" size="sm" />
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {lastHitResult.predictions.map((pred, idx) => (
+                <div key={pred.id || idx} className={`rounded-lg px-3 py-1.5 flex items-center gap-1.5 ${pred.is_hit ? 'bg-green-50 border border-green-200' : 'bg-gray-50'}`}>
+                  <span className="text-xs text-gray-400">{idx + 1}.</span>
+                  <div className="flex gap-0.5">
+                    {pred.red_balls.split(',').map((ball) => (
+                      <BallNumber key={ball} number={parseInt(ball)} type="red" size="sm" />
+                    ))}
+                  </div>
+                  <span className="text-gray-300">+</span>
+                  <BallNumber number={pred.blue_ball} type="blue" size="sm" />
+                  {pred.is_hit && (
+                    <span className="ml-1 text-xs text-green-600 font-medium">{pred.hit_level}</span>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
-        ) : (
-          <p className="text-gray-400 text-center py-4">暂无数据</p>
         )}
-      </section>
 
-      {/* 预测号码 - 全宽卡片 */}
-      <section className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 animate-slide-up" style={{animationDelay: '0.2s'}}>
+        {/* 最新开奖 + 预测号码 */}
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-base font-semibold text-gray-700">预测号码</h2>
+          <h2 className="text-base font-semibold text-gray-700">最新开奖 & 本期预测</h2>
           <button
             onClick={handleGenerate}
             disabled={generating}
@@ -179,64 +198,45 @@ export default function Dashboard() {
             {generating ? '生成中...' : '生成预测'}
           </button>
         </div>
-        {predictions.length > 0 ? (
-          <div className="flex flex-wrap gap-4">
-            {predictions.slice(0, 5).map((pred, idx) => (
-              <div key={pred.id || idx} className="bg-gray-50 rounded-lg px-4 py-2 flex items-center gap-2">
-                <span className="text-xs text-gray-400 w-6">{idx + 1}.</span>
-                <div className="flex gap-1">
-                  {pred.red_balls.split(',').map((ball) => (
-                    <BallNumber key={ball} number={parseInt(ball)} type="red" size="sm" />
-                  ))}
-                </div>
-                <span className="text-gray-300">+</span>
-                <BallNumber number={pred.blue_ball} type="blue" size="sm" />
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+          {latestRecord ? (
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1">
+              <div className="flex gap-1.5 flex-wrap">
+                {latestRecord.red_balls.split(',').map((ball) => (
+                  <BallNumber key={ball} number={parseInt(ball)} type="red" size="md" />
+                ))}
+                <span className="text-gray-400 flex items-center mx-1">+</span>
+                <BallNumber number={latestRecord.blue_ball} type="blue" size="md" />
               </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-gray-400 text-center py-4">暂无预测数据</p>
-        )}
-      </section>
+              <div className="text-sm text-gray-400">
+                <span className="font-mono">{latestRecord.period}</span>
+                <span className="mx-2">|</span>
+                <span>{latestRecord.draw_date}</span>
+              </div>
+            </div>
+          ) : (
+            <p className="text-gray-400">暂无数据</p>
+          )}
 
-      {/* 上期预测中奖结果 */}
-      {lastHitResult && lastHitResult.predictions.length > 0 && (
-        <section className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 animate-slide-up" style={{animationDelay: '0.25s'}}>
-          <h2 className="text-base font-semibold text-gray-700 mb-3">上期预测中奖结果</h2>
-          <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4 pb-4 border-b border-gray-100">
-            <div className="text-sm text-gray-500">
-              <span className="font-mono">{lastHitResult.lottery.period}</span>
-              <span className="mx-2">|</span>
-              <span>{lastHitResult.lottery.draw_date}</span>
-              <span className="ml-2 text-gray-400">开奖号码</span>
-            </div>
-            <div className="flex gap-1.5">
-              {lastHitResult.lottery.red_balls.split(',').map((ball) => (
-                <BallNumber key={ball} number={parseInt(ball)} type="red" size="sm" />
-              ))}
-              <span className="text-gray-400 flex items-center mx-1">+</span>
-              <BallNumber number={lastHitResult.lottery.blue_ball} type="blue" size="sm" />
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            {lastHitResult.predictions.map((pred, idx) => (
-              <div key={pred.id || idx} className={`rounded-lg px-4 py-2 flex items-center gap-2 ${pred.is_hit ? 'bg-green-50 border border-green-200' : 'bg-gray-50'}`}>
-                <span className="text-xs text-gray-400 w-6">{idx + 1}.</span>
-                <div className="flex gap-1">
-                  {pred.red_balls.split(',').map((ball) => (
-                    <BallNumber key={ball} number={parseInt(ball)} type="red" size="sm" />
-                  ))}
+          {/* 本期预测 */}
+          {predictions.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {predictions.slice(0, 5).map((pred, idx) => (
+                <div key={pred.id || idx} className="bg-gray-50 rounded-lg px-3 py-1.5 flex items-center gap-1.5">
+                  <span className="text-xs text-gray-400">{idx + 1}.</span>
+                  <div className="flex gap-0.5">
+                    {pred.red_balls.split(',').map((ball) => (
+                      <BallNumber key={ball} number={parseInt(ball)} type="red" size="sm" />
+                    ))}
+                  </div>
+                  <span className="text-gray-300">+</span>
+                  <BallNumber number={pred.blue_ball} type="blue" size="sm" />
                 </div>
-                <span className="text-gray-300">+</span>
-                <BallNumber number={pred.blue_ball} type="blue" size="sm" />
-                {pred.is_hit && (
-                  <span className="ml-1 text-xs text-green-600 font-medium">{pred.hit_level}</span>
-                )}
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* 趋势图和分布图 - 三列布局 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
