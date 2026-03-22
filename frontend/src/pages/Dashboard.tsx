@@ -34,7 +34,6 @@ interface LastHitResult {
 }
 
 export default function Dashboard() {
-  const [latestRecord, setLatestRecord] = useState<LotteryRecord | null>(null)
   const [recentRecords, setRecentRecords] = useState<LotteryRecord[]>([])
   const [predictions, setPredictions] = useState<Prediction[]>([])
   const [lastHitResult, setLastHitResult] = useState<LastHitResult | null>(null)
@@ -65,7 +64,6 @@ export default function Dashboard() {
       if (historyRes.data.code === 0) {
         const records = historyRes.data.data.records || []
         setRecentRecords(records)
-        if (records.length > 0) setLatestRecord(records[0])
       }
 
       if (predRes.data.code === 0) {
@@ -187,9 +185,9 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* 最新开奖 + 预测号码 */}
+        {/* 本期预测 */}
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-base font-semibold text-gray-700">最新开奖 & 本期预测</h2>
+          <h2 className="text-base font-semibold text-gray-700">本期预测</h2>
           <button
             onClick={handleGenerate}
             disabled={generating}
@@ -198,44 +196,24 @@ export default function Dashboard() {
             {generating ? '生成中...' : '生成预测'}
           </button>
         </div>
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-          {latestRecord ? (
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1">
-              <div className="flex gap-1.5 flex-wrap">
-                {latestRecord.red_balls.split(',').map((ball) => (
-                  <BallNumber key={ball} number={parseInt(ball)} type="red" size="md" />
-                ))}
-                <span className="text-gray-400 flex items-center mx-1">+</span>
-                <BallNumber number={latestRecord.blue_ball} type="blue" size="md" />
-              </div>
-              <div className="text-sm text-gray-400">
-                <span className="font-mono">{latestRecord.period}</span>
-                <span className="mx-2">|</span>
-                <span>{latestRecord.draw_date}</span>
-              </div>
-            </div>
-          ) : (
-            <p className="text-gray-400">暂无数据</p>
-          )}
-
-          {/* 本期预测 */}
-          {predictions.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {predictions.slice(0, 5).map((pred, idx) => (
-                <div key={pred.id || idx} className="bg-gray-50 rounded-lg px-3 py-1.5 flex items-center gap-1.5">
-                  <span className="text-xs text-gray-400">{idx + 1}.</span>
-                  <div className="flex gap-0.5">
-                    {pred.red_balls.split(',').map((ball) => (
-                      <BallNumber key={ball} number={parseInt(ball)} type="red" size="sm" />
-                    ))}
-                  </div>
-                  <span className="text-gray-300">+</span>
-                  <BallNumber number={pred.blue_ball} type="blue" size="sm" />
+        {predictions.length > 0 ? (
+          <div className="flex flex-wrap gap-2">
+            {predictions.slice(0, 5).map((pred, idx) => (
+              <div key={pred.id || idx} className="bg-gray-50 rounded-lg px-3 py-1.5 flex items-center gap-1.5">
+                <span className="text-xs text-gray-400">{idx + 1}.</span>
+                <div className="flex gap-0.5">
+                  {pred.red_balls.split(',').map((ball) => (
+                    <BallNumber key={ball} number={parseInt(ball)} type="red" size="sm" />
+                  ))}
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+                <span className="text-gray-300">+</span>
+                <BallNumber number={pred.blue_ball} type="blue" size="sm" />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-400">暂无预测数据</p>
+        )}
       </section>
 
       {/* 趋势图和分布图 - 三列布局 */}
