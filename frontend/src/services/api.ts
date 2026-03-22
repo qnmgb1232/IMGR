@@ -28,3 +28,9 @@ export const statisticsApi = {
 export const crawlerApi = {
   fetch: () => api.post('/crawler/fetch'),
 }
+
+export const settingsApi = {
+  getPredictionHistory: (limit = 50) => api.get(`/settings/history?limit=${limit}`),
+  getAvailablePeriods: () => api.get('/settings/periods'),
+  getByPeriod: (period: string) => api.get(`/settings/by-period/${period}`),
+}
