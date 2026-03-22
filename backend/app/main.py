@@ -2,7 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import create_tables
 from app.config import settings
-from app.routers import lottery, prediction, statistics, crawler, settings
+from app.routers import lottery, prediction, statistics, crawler
+import app.routers.settings as settings_router
 from app.schemas import ApiResponse
 from app.scheduler import setup_scheduler, start_scheduler, stop_scheduler
 
@@ -20,7 +21,7 @@ app.include_router(lottery.router, prefix="/api/lottery", tags=["lottery"])
 app.include_router(prediction.router, prefix="/api/prediction", tags=["prediction"])
 app.include_router(statistics.router, prefix="/api/statistics", tags=["statistics"])
 app.include_router(crawler.router, prefix="/api/crawler", tags=["crawler"])
-app.include_router(settings.router, prefix="/api/settings", tags=["settings"])
+app.include_router(settings_router.router, prefix="/api/settings", tags=["settings"])
 
 @app.on_event("startup")
 def startup_event():
