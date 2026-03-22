@@ -62,7 +62,7 @@ class PredictorService:
 
     def ml_predict(self) -> Tuple[List[int], int]:
         """机器学习预测（简化版 - 使用频率分析）"""
-        records = self.stats_service.get_recent_records(100)
+        records = self.stats_service.get_recent_records(1500)
 
         red_probs = {i: 0.0 for i in range(1, 34)}
         blue_probs = {i: 0.0 for i in range(1, 17)}

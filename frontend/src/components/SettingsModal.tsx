@@ -193,7 +193,7 @@ export default function SettingsModal({ isOpen, onClose }: { isOpen: boolean; on
                     </div>
                   </div>
                   <p className="text-sm text-gray-600 leading-relaxed">
-                    基于100期历史数据计算每个号码的出现概率，使用加权随机抽样方法选号。红球和蓝球分别根据概率分布独立抽取。
+                    基于1500期历史数据计算每个号码的出现概率，使用加权随机抽样方法选号。红球和蓝球分别根据概率分布独立抽取。
                   </p>
                 </div>
                 <div className="bg-white rounded-xl p-4 shadow-sm border-l-4 border-green-500 hover:shadow-md transition-shadow">
