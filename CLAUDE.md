@@ -8,6 +8,13 @@ IMGR（我必发财）是一个彩票数据管理与预测系统，采用 FastAP
 
 ## 常用命令
 
+### 一键启动（推荐）
+
+```bash
+./start.sh                           # 启动前后端服务
+./stop.sh                            # 停止所有服务
+```
+
 ### 后端
 
 ```bash
@@ -39,24 +46,28 @@ npm run preview                      # 预览生产构建
 ```
 backend/app/
 ├── main.py              # FastAPI 应用入口，路由注册
+├── config.py            # 应用配置管理
 ├── database.py          # SQLAlchemy 会话和模型定义
+├── models.py            # 数据模型
 ├── schemas.py           # Pydantic 请求/响应模型
 ├── scheduler.py         # APScheduler 定时任务配置
 ├── routers/             # API 路由
 │   ├── lottery.py       # 彩票历史数据 API
-│   ├── prediction.py     # 预测号码 API
-│   ├── statistics.py     # 统计分析 API
-│   └── crawler.py        # 爬虫控制 API (待实现)
+│   ├── prediction.py    # 预测号码 API
+│   ├── statistics.py    # 统计分析 API
+│   ├── crawler.py       # 爬虫控制 API
+│   └── settings.py      # 设置 API
 └── services/            # 业务逻辑服务
-    ├── crawler.py        # 数据爬取
-    ├── predictor.py      # 预测引擎
-    ├── statistics.py     # 统计分析
+    ├── crawler.py        # 数据爬取 (Playwright)
+    ├── predictor.py      # 预测引擎 (scikit-learn)
+    ├── statistics.py    # 统计分析
     └── hit_checker.py    # 中奖核对
 ```
 
 - 定时任务: 每周二、四、六 20:35-21:30 自动爬取开奖数据
 - API 响应格式: `{ "code": 0, "message": "success", "data": {...} }`
 - 数据库: `data/imgr.db` (SQLite)
+- 配置管理: `app/config.py` 管理应用配置，`app/routers/settings.py` 提供设置 API
 
 ### 前端结构
 
@@ -90,6 +101,6 @@ frontend/src/
 
 ## 开发注意事项
 
-- 爬虫端点 `/api/crawler/fetch` 目前返回 "待实现"
+- 爬虫使用 Playwright 框架，定时任务每周二、四、六 20:35-21:30 自动爬取开奖数据
 - 前端 TypeScript 严格模式，构建时会先检查类型
 - 后端使用 Pydantic 模型进行请求验证和响应序列化

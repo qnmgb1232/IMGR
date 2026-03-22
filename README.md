@@ -44,8 +44,8 @@ npm run dev
 
 ## 技术栈
 
-- **后端**: Python 3.11+, FastAPI, SQLAlchemy, APScheduler, Playwright
-- **前端**: React 18, TypeScript, Vite, TailwindCSS, Recharts
+- **后端**: Python 3.11+, FastAPI, SQLAlchemy, APScheduler, Playwright, scikit-learn
+- **前端**: React 18, TypeScript, Vite, TailwindCSS, Recharts, React Router
 
 ## 项目结构
 
@@ -54,27 +54,33 @@ wcc/
 ├── backend/
 │   ├── app/
 │   │   ├── main.py          # FastAPI 入口
+│   │   ├── config.py        # 应用配置
 │   │   ├── database.py      # 数据库配置
 │   │   ├── models.py        # 数据模型
 │   │   ├── schemas.py       # Pydantic 模型
+│   │   ├── scheduler.py     # 定时任务
 │   │   ├── routers/         # API 路由
 │   │   │   ├── lottery.py   # 开奖数据 API
 │   │   │   ├── prediction.py # 预测 API
 │   │   │   ├── statistics.py # 统计 API
-│   │   │   └── crawler.py   # 爬虫 API
+│   │   │   ├── crawler.py   # 爬虫 API
+│   │   │   └── settings.py  # 设置 API
 │   │   └── services/        # 业务逻辑
-│   │       ├── crawler.py   # 数据爬取
-│   │       ├── predictor.py # 预测引擎
+│   │       ├── crawler.py   # 数据爬取 (Playwright)
+│   │       ├── predictor.py # 预测引擎 (scikit-learn)
 │   │       ├── statistics.py # 统计分析
 │   │       └── hit_checker.py # 中奖检查
 │   └── run.py               # 启动脚本
 ├── frontend/
 │   ├── src/
 │   │   ├── App.tsx          # 主应用
+│   │   ├── services/api.ts  # API 调用
 │   │   ├── pages/           # 页面组件
-│   │   │   └── Dashboard.tsx # 数据中心
-│   │   ├── components/       # 通用组件
-│   │   └── services/        # API 调用
+│   │   │   ├── Home.tsx     # 历史开奖
+│   │   │   ├── Predictions.tsx # 预测号码
+│   │   │   ├── Trends.tsx   # 走势图
+│   │   │   └── Distribution.tsx # 号码分布
+│   │   └── components/     # 通用组件
 │   └── vite.config.ts      # Vite 配置
 ├── data/
 │   └── imgr.db             # SQLite 数据库
@@ -94,12 +100,14 @@ wcc/
 | `/api/statistics/trend` | GET | 获取号码趋势 |
 | `/api/statistics/distribution` | GET | 获取号码分布 |
 | `/api/crawler/fetch` | POST | 爬取最新数据 |
+| `/api/settings` | GET/PUT | 获取/更新设置 |
 
 ## 数据说明
 
 - 数据库包含 **2013年至今** 的所有双色球开奖数据
 - 爬虫数据源: 中国福利彩票官方 API
-- 预测基于历史数据的频率统计分析
+- 预测基于历史数据的机器学习分析 (scikit-learn)
+- 定时任务: 每周二、四、六 20:35-21:30 自动爬取开奖数据
 
 ## 注意事项
 
