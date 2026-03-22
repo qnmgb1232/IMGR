@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class CrawlerService:
     """双色球爬虫服务"""
 
-    API_URL = "https://www.cwl.gov.cn/cwl_admin/front/cwlkj/search/kjxx/findDrawNotice?name=ssq&issueCount=30"
+    API_URL_TEMPLATE = "https://www.cwl.gov.cn/cwl_admin/front/cwlkj/search/kjxx/findDrawNotice?name=ssq&issueCount={issueCount}"
 
     async def initialize(self):
         """初始化Playwright浏览器"""
@@ -25,11 +25,11 @@ class CrawlerService:
         await self.browser.close()
         await self.playwright.stop()
 
-    async def fetch_data(self) -> Optional[List[dict]]:
+    async def fetch_data(self, issueCount: int = 30) -> Optional[List[dict]]:
         """获取开奖数据"""
         page = await self.browser.new_page()
         try:
-            await page.goto(self.API_URL, timeout=30000)
+            await page.goto(self.API_URL_TEMPLATE.format(issueCount=issueCount), timeout=30000)
             await page.wait_for_timeout(3000)
             content = await page.content()
 
@@ -66,7 +66,7 @@ class CrawlerService:
         finally:
             await page.close()
 
-    async def crawl(self, db: Session) -> int:
+    async def crawl(self, db: Session, issueCount: int = 30) -> int:
         """执行爬取"""
         await self.initialize()
         fetched = 0
@@ -76,7 +76,7 @@ class CrawlerService:
             ).first()
             latest_period = latest_local.period if latest_local else "0"
 
-            records = await self.fetch_data()
+            records = await self.fetch_data(issueCount)
             if not records:
                 logger.error("No records fetched")
                 return 0
