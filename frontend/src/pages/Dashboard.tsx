@@ -148,7 +148,7 @@ export default function Dashboard() {
         {lastHitResult && lastHitResult.predictions.length > 0 && (
           <div className="mb-4 pb-4 border-b border-gray-100">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-base font-semibold text-gray-700">上期预测中奖结果</h2>
+              <h2 className="text-base font-semibold text-gray-700">最新开奖结果</h2>
             </div>
             <div className="flex flex-col md:flex-row md:items-center gap-3 mb-4">
               <div className="text-sm text-gray-500">
