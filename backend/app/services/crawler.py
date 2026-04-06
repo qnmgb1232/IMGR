@@ -18,8 +18,8 @@ class CrawlerService:
     async def fetch_data(self, issueCount: int = 30) -> Optional[List[dict]]:
         """获取开奖数据 - 直接调用官方 JSON API，无需浏览器"""
         try:
-            with httpx.AsyncClient(timeout=30.0) as client:
-                response = client.get(
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                response = await client.get(
                     self.API_URL.format(issueCount=issueCount),
                     headers={"User-Agent": self.USER_AGENT}
                 )
@@ -54,8 +54,9 @@ class CrawlerService:
             return None
 
     def crawl(self, db: Session, issueCount: int = 30) -> int:
-        """执行爬取（同步封装）"""
+        """执行爬取（自动检测运行环境）"""
         import asyncio
+        import inspect
 
         fetched = 0
         try:
@@ -64,7 +65,18 @@ class CrawlerService:
             ).first()
             latest_period = latest_local.period if latest_local else "0"
 
-            records = asyncio.run(self.fetch_data(issueCount))
+            # 检测是否已在 event loop 中，使用适当的调用方式
+            try:
+                loop = asyncio.get_running_loop()
+                # 已在 event loop 中，使用 run_coroutine_threadsafe
+                future = asyncio.run_coroutine_threadsafe(
+                    self.fetch_data(issueCount), loop
+                )
+                records = future.result(timeout=60)
+            except RuntimeError:
+                # 不在 event loop 中，可以安全使用 asyncio.run()
+                records = asyncio.run(self.fetch_data(issueCount))
+
             if not records:
                 logger.error("No records fetched")
                 return 0
