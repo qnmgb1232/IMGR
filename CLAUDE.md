@@ -36,7 +36,7 @@ npm run preview                      # 预览生产构建
 
 ## 技术栈
 
-- **后端:** Python 3.11+, FastAPI, SQLAlchemy 2.0, SQLite, APScheduler, Playwright, scikit-learn
+- **后端:** Python 3.11+, FastAPI, SQLAlchemy 2.0, SQLite, APScheduler, httpx, scikit-learn
 - **前端:** TypeScript, React 18, Vite, TailwindCSS, Recharts, React Router
 
 ## 架构
@@ -58,7 +58,7 @@ backend/app/
 │   ├── crawler.py       # 爬虫控制 API
 │   └── settings.py      # 设置 API
 └── services/            # 业务逻辑服务
-    ├── crawler.py        # 数据爬取 (Playwright)
+    ├── crawler.py        # 数据爬取 (httpx 直接调用官方 JSON API)
     ├── predictor.py      # 预测引擎 (scikit-learn)
     ├── statistics.py    # 统计分析
     └── hit_checker.py    # 中奖核对
@@ -101,6 +101,7 @@ frontend/src/
 
 ## 开发注意事项
 
-- 爬虫使用 Playwright 框架，定时任务每周二、四、六 20:35-21:30 自动爬取开奖数据
+- 爬虫使用 httpx 直接调用官方 JSON API（cwl.gov.cn），无需浏览器
+- 定时任务每周二、四、六 21:05 爬取，21:10 生成预测，21:15 检查中奖
 - 前端 TypeScript 严格模式，构建时会先检查类型
 - 后端使用 Pydantic 模型进行请求验证和响应序列化
